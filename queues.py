@@ -41,7 +41,7 @@ class QueueHandler():
             else:
                 if not unique_queue:
                     response["message"] = "Ya existe una cola con el nombre " + name_queue
-                    response["status"] = 403
+                    response["status"] = 400
                 else:
                     response["message"] = "No estas autorizado a hacer esto"
                     response["status"] = 401

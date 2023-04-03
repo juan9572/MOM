@@ -23,11 +23,34 @@ class APIHandler(http.server.BaseHTTPRequestHandler):
         path = parsed_url.path
         query = parse_qs(parsed_url.query)
         if path == '/getQueues':
-            self.getUserQueues(user)
+            self.getQueues(query)
         elif path == '/getTopics':
-            self.handle_bye()
+            self.getTopics(query)
+        elif path == '/consumeMessage':
+            self.consumeMessage(query)
         else:
             self.notFoundError(path + " in GET method")
+
+    def consumeMessage(self, query):
+        self.send_response(200)
+        self.send_header('Content-type', 'text/plain')
+        self.end_headers()
+        message = f"Hello, World! {username}"
+        self.wfile.write(message.encode())
+
+    def getTopics(self, query):
+        self.send_response(200)
+        self.send_header('Content-type', 'text/plain')
+        self.end_headers()
+        message = f"Hello, World! {username}"
+        self.wfile.write(message.encode())
+
+    def getQueues(self, query):
+        self.send_response(200)
+        self.send_header('Content-type', 'text/plain')
+        self.end_headers()
+        message = f"Hello, World! {username}"
+        self.wfile.write(message.encode())
 
     def do_POST(self):
         parsed_url = urlparse(self.path)
@@ -55,33 +78,42 @@ class APIHandler(http.server.BaseHTTPRequestHandler):
             self.notFoundError(path + " in POST method")
 
     def sendMessage(self, query):
-        username = query.get('username', [None])[0]
-        self.send_response(200)
+        nameE = query.get('nameExchange', [None])[0]
+        message = query.get('message', [None])[0]
+        res = queue_handler.sendMessage(nameE, message, self.client_address[0])
+        self.send_response(res["status"])
         self.send_header('Content-type', 'text/plain')
         self.end_headers()
-        queue_handler.createTopic(username)
-        message = f"Hello, World! {username}"
-        self.wfile.write(message.encode())
-
-    def vinculateQueue(self, query):
-        username = query.get('username', [None])[0]
-        self.send_response(200)
-        self.send_header('Content-type', 'text/plain')
-        self.end_headers()
-        queue_handler.vinculateQueue(username)
-        message = f"Hello, World! {username}"
+        message = res["message"]
+        logging.info(res["message"])
         self.wfile.write(message.encode())
 
     def publishMessage(self, query):
-        username = query.get('username', [None])[0]
-        self.send_response(200)
+        nameT = query.get('nameTopic', [None])[0]
+        message = query.get('message', [None])[0]
+        res = topic_handler.publishMessage(nameT, message, self.client_address[0])
+        self.send_response(res["status"])
         self.send_header('Content-type', 'text/plain')
         self.end_headers()
-        topic_handler.subscribeToTopic(username)
-        message = f"Hello, World! {username}"
+        message = res["message"]
+        logging.info(res["message"])
+        self.wfile.write(message.encode())
+
+    def vinculateQueue(self, query):
+        #Se debería poder reasignar una cola ya previamente asignada a algun topico o exchange?
+        #Validar que no este asociada
+        nameE = query.get('nameExchange', [None])[0]
+        nameQ = query.get('nameQueue', [None])[0]
+        res = queue_handler.vinculateQueue(nameE, nameQ, self.client_address[0])
+        self.send_response(res["status"])
+        self.send_header('Content-type', 'text/plain')
+        self.end_headers()
+        message = res["message"]
+        logging.info(res["message"])
         self.wfile.write(message.encode())
 
     def subscribeToTopic(self, query):
+        #Se debería poder reasignar una cola ya previamente asignada a algun topico o exchange?
         nameT = query.get('nameTopic', [None])[0]
         nameQ = query.get('nameQueue', [None])[0]
         res = topic_handler.subscribeToTopic(nameT, nameQ, self.client_address[0])
@@ -160,21 +192,6 @@ class APIHandler(http.server.BaseHTTPRequestHandler):
             self.end_headers()
             message = "Not found " + path
             self.wfile.write(message.encode())
-
-    def getUserQueues(self, username):
-        self.send_response(200)
-        self.send_header('Content-type', 'text/plain')
-        self.end_headers()
-        message = f"Hello, World! {username}"
-        self.wfile.write(message.encode())
-
-    def getTopic(self, username):
-        self.send_response(200)
-        self.send_header('Content-type', 'text/plain')
-        self.end_headers()
-        message = f"Hello, World! {username}"
-        self.wfile.write(message.encode())
-
 
 if __name__ == '__main__':
     logging.basicConfig(filename='operations.log', level=logging.INFO)

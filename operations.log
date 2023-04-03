@@ -1,140 +1,38 @@
 INFO:root:Starting server in port: 8000
-INFO:root:127.0.0.1 - - [02/Apr/2023 17:47:32] "POST /createQueue?nameQueue=newQueue1 HTTP/1.1" 403 -
-INFO:root:Ya existe una cola con el nombre newQueue1
-INFO:root:Finishing server...
-INFO:root:Starting server in port: 8000
-INFO:root:Finishing server...
-INFO:root:Starting server in port: 8000
-INFO:root:127.0.0.1 - - [02/Apr/2023 21:58:51] "POST /createTopic?nameTopic=Ensaladas HTTP/1.1" 200 -
-INFO:root:Se creo correctamente el TOPICO Ensaladas
-INFO:root:Finishing server...
-INFO:root:Starting server in port: 8000
-INFO:root:127.0.0.1 - - [02/Apr/2023 22:01:55] "POST /createTopic?nameTopic=Ensaladas HTTP/1.1" 200 -
-INFO:root:Se creo correctamente el TOPICO Ensaladas
-INFO:root:127.0.0.1 - - [02/Apr/2023 22:02:02] "POST /createTopic?nameTopic=Ensaladas HTTP/1.1" 403 -
-INFO:root:Ya existe un topico con el nombre Ensaladas
-INFO:root:Finishing server...
-INFO:root:Starting server in port: 8000
-INFO:root:Finishing server...
-INFO:root:Starting server in port: 8000
-INFO:root:Finishing server...
-INFO:root:Starting server in port: 8000
-INFO:root:127.0.0.1 - - [02/Apr/2023 23:41:33] "POST /registerUser?username=Julian&password=123 HTTP/1.1" 201 -
-INFO:root:Se creo la cuenta Julian y se agrego a la DB
-INFO:root:Finishing server...
-INFO:root:Starting server in port: 8000
-INFO:root:127.0.0.1 - - [02/Apr/2023 23:45:23] "POST /logoutUser?username=Julian&password=123 HTTP/1.1" 200 -
-INFO:root:Adios, 127.0.0.1 vuelve pronto.
-INFO:root:Finishing server...
-INFO:root:Starting server in port: 8000
-INFO:root:127.0.0.1 - - [03/Apr/2023 00:51:16] "POST /registerUser?username=Juan&password=123 HTTP/1.1" 201 -
+INFO:root:127.0.0.1 - - [03/Apr/2023 18:31:41] "POST /registerUser?username=Juan&password=123 HTTP/1.1" 201 -
 INFO:root:Se creo la cuenta Juan y se agrego a la DB
-INFO:root:127.0.0.1 - - [03/Apr/2023 00:51:27] "POST /logoutUser?username=Juan&password=123 HTTP/1.1" 200 -
+INFO:root:127.0.0.1 - - [03/Apr/2023 18:33:22] "POST /logoutUser?username=Juan&password=123 HTTP/1.1" 200 -
 INFO:root:Adios, 127.0.0.1 vuelve pronto.
-INFO:root:127.0.0.1 - - [03/Apr/2023 00:51:43] "POST /registerUser?username=Julian&password=123 HTTP/1.1" 201 -
-INFO:root:Se creo la cuenta Julian y se agrego a la DB
-INFO:root:127.0.0.1 - - [03/Apr/2023 00:52:39] "POST /createTopic?nameTopic=Gatos&password=123 HTTP/1.1" 200 -
+INFO:root:127.0.0.1 - - [03/Apr/2023 18:33:32] "POST /registerUser?username=Donovan&password=1234 HTTP/1.1" 201 -
+INFO:root:Se creo la cuenta Donovan y se agrego a la DB
+INFO:root:127.0.0.1 - - [03/Apr/2023 18:34:12] "POST /createTopic?nameTopic=Gatos HTTP/1.1" 200 -
 INFO:root:Se creo correctamente el TOPICO Gatos
-INFO:root:Finishing server...
-INFO:root:Starting server in port: 8000
-INFO:root:127.0.0.1 - - [03/Apr/2023 00:54:10] "POST /createTopic?nameTopic=Gatos&password=123 HTTP/1.1" 200 -
-INFO:root:Se creo correctamente el TOPICO Gatos
-INFO:root:127.0.0.1 - - [03/Apr/2023 00:55:10] "POST /logoutUser?nameTopic=Gatos&password=123 HTTP/1.1" 200 -
+INFO:root:127.0.0.1 - - [03/Apr/2023 18:34:36] "POST /logoutUser?nameTopic=Gatos HTTP/1.1" 200 -
 INFO:root:Adios, 127.0.0.1 vuelve pronto.
-INFO:root:127.0.0.1 - - [03/Apr/2023 00:55:28] "POST /loginUser?nameUser=Juan&password=123 HTTP/1.1" 400 -
-INFO:root:Se esperaba un username y password, no se recibieron...
-INFO:root:127.0.0.1 - - [03/Apr/2023 00:55:51] "POST /loginUser?username=Juan&password=123 HTTP/1.1" 200 -
+INFO:root:127.0.0.1 - - [03/Apr/2023 18:35:13] "POST /loginUser?username=Juan&password=123 HTTP/1.1" 200 -
 INFO:root:Bienvenido Juan
-INFO:root:127.0.0.1 - - [03/Apr/2023 00:56:21] "POST /createQueue?nameQueue=Videos_de_gatos&password=123 HTTP/1.1" 200 -
-INFO:root:Se creo correctamente la QUEUE Videos_de_gatos
-INFO:root:127.0.0.1 - - [03/Apr/2023 00:58:14] "POST /subscribeToTopic?nameTopic=Gatos&nameQueue=Videos_de_gatos HTTP/1.1" 400 -
-INFO:root:La cola Videos_de_gatos no existe
-INFO:root:Finishing server...
-INFO:root:Starting server in port: 8000
-INFO:root:127.0.0.1 - - [03/Apr/2023 01:00:07] "POST /subscribeToTopic?nameTopic=Gatos&nameQueue=Videos_de_gatos HTTP/1.1" 400 -
-INFO:root:La cola Videos_de_gatos no existe
-INFO:root:Finishing server...
-INFO:root:Starting server in port: 8000
-INFO:root:127.0.0.1 - - [03/Apr/2023 01:04:15] "POST /subscribeToTopic?nameTopic=Gatos&nameQueue=Videos_de_gatos HTTP/1.1" 400 -
-INFO:root:La cola Videos_de_gatos no existe
-INFO:root:Finishing server...
-INFO:root:Starting server in port: 8000
-INFO:root:Finishing server...
-INFO:root:Starting server in port: 8000
-INFO:root:127.0.0.1 - - [03/Apr/2023 01:05:44] "POST /subscribeToTopic?nameTopic=Gatos&nameQueue=Videos_de_gatos HTTP/1.1" 500 -
-INFO:root:Hubo un error al comunicarse con la DB
-INFO:root:Finishing server...
-INFO:root:Starting server in port: 8000
-INFO:root:127.0.0.1 - - [03/Apr/2023 01:06:59] "POST /subscribeToTopic?nameTopic=Gatos&nameQueue=Videos_de_gatos HTTP/1.1" 500 -
-INFO:root:Hubo un error al comunicarse con la DB
-INFO:root:Finishing server...
-INFO:root:Starting server in port: 8000
-INFO:root:127.0.0.1 - - [03/Apr/2023 01:07:24] "POST /subscribeToTopic?nameTopic=Gatos&nameQueue=Videos_de_gatos HTTP/1.1" 500 -
-INFO:root:Hubo un error al comunicarse con la DB
-INFO:root:Finishing server...
-INFO:root:Starting server in port: 8000
-INFO:root:127.0.0.1 - - [03/Apr/2023 01:09:02] "POST /subscribeToTopic?nameTopic=Gatos&nameQueue=Videos_de_gatos HTTP/1.1" 200 -
+INFO:root:127.0.0.1 - - [03/Apr/2023 18:35:44] "POST /createQueue?nameQueue=VideosDeGatos HTTP/1.1" 200 -
+INFO:root:Se creo correctamente la QUEUE VideosDeGatos
+INFO:root:127.0.0.1 - - [03/Apr/2023 18:36:29] "POST /createQueue?nameTopic=Gatos&nameQueue=VideosDeGatos HTTP/1.1" 403 -
+INFO:root:Ya existe una cola con el nombre VideosDeGatos
+INFO:root:127.0.0.1 - - [03/Apr/2023 18:36:46] "POST /subscribeToTopic?nameTopic=Gatos&nameQueue=VideosDeGatos HTTP/1.1" 200 -
 INFO:root:Te has suscrito correctamente al topico Gatos
-INFO:root:Finishing server...
-INFO:root:Starting server in port: 8000
-INFO:root:127.0.0.1 - - [03/Apr/2023 01:10:35] "POST /subscribeToTopic?nameTopic=Gatos&nameQueue=Videos_de_gatos HTTP/1.1" 500 -
-INFO:root:Hubo un error al comunicarse con la DB
-INFO:root:Finishing server...
-INFO:root:Starting server in port: 8000
-INFO:root:127.0.0.1 - - [03/Apr/2023 01:10:59] "POST /subscribeToTopic?nameTopic=Gatos&nameQueue=Videos_de_gatos HTTP/1.1" 200 -
-INFO:root:Te has suscrito correctamente al topico Gatos
-INFO:root:Finishing server...
-INFO:root:Starting server in port: 8000
-INFO:root:127.0.0.1 - - [03/Apr/2023 01:12:38] "POST /subscribeToTopic?nameTopic=Gatos&nameQueue=Videos_de_gatos HTTP/1.1" 200 -
-INFO:root:Te has suscrito correctamente al topico Gatos
-INFO:root:Finishing server...
-INFO:root:Starting server in port: 8000
-INFO:root:127.0.0.1 - - [03/Apr/2023 01:13:38] "POST /subscribeToTopic?nameTopic=Gatos&nameQueue=Videos_de_gatos HTTP/1.1" 500 -
-INFO:root:Hubo un error al comunicarse con la DB
-INFO:root:Finishing server...
-INFO:root:Starting server in port: 8000
-INFO:root:Finishing server...
-INFO:root:Starting server in port: 8000
-INFO:root:127.0.0.1 - - [03/Apr/2023 01:23:20] "POST /subscribeToTopic?nameTopic=Gatos&nameQueue=Videos_de_gatos HTTP/1.1" 500 -
-INFO:root:Ya estas suscrito al topico Gatos
-INFO:root:Finishing server...
-INFO:root:Starting server in port: 8000
-INFO:root:127.0.0.1 - - [03/Apr/2023 01:29:48] "POST /subscribeToTopic?nameTopic=Gatos&nameQueue=Videos_de_gatos HTTP/1.1" 500 -
-INFO:root:Hubo un error al comunicarse con la DB
-INFO:root:127.0.0.1 - - [03/Apr/2023 01:30:09] "POST /subscribeToTopic?nameTopic=Gatos&nameQueue=Videos_de_gatos HTTP/1.1" 500 -
-INFO:root:Hubo un error al comunicarse con la DB
-INFO:root:Finishing server...
-INFO:root:Starting server in port: 8000
-INFO:root:127.0.0.1 - - [03/Apr/2023 01:31:09] "POST /subscribeToTopic?nameTopic=Gatos&nameQueue=Videos_de_gatos HTTP/1.1" 500 -
-INFO:root:Hubo un error al comunicarse con la DB
-INFO:root:Finishing server...
-INFO:root:Starting server in port: 8000
-INFO:root:127.0.0.1 - - [03/Apr/2023 01:31:34] "POST /subscribeToTopic?nameTopic=Gatos&nameQueue=Videos_de_gatos HTTP/1.1" 500 -
-INFO:root:Hubo un error al comunicarse con la DB
-INFO:root:Finishing server...
-INFO:root:Starting server in port: 8000
-INFO:root:127.0.0.1 - - [03/Apr/2023 01:34:28] "POST /subscribeToTopic?nameTopic=Gatos&nameQueue=Videos_de_gatos HTTP/1.1" 200 -
-INFO:root:Te has suscrito correctamente al topico Gatos
-INFO:root:127.0.0.1 - - [03/Apr/2023 01:34:51] "POST /subscribeToTopic?nameTopic=Gatos&nameQueue=Videos_de_gatos HTTP/1.1" 500 -
-INFO:root:Ya estas suscrito al topico Gatos
-INFO:root:Finishing server...
-INFO:root:Starting server in port: 8000
-INFO:root:127.0.0.1 - - [03/Apr/2023 01:36:08] "POST /subscribeToTopic?nameTopic=Gatos&nameQueue=Videos_de_gatos_1 HTTP/1.1" 500 -
-INFO:root:Ya estas suscrito al topico Gatos
-INFO:root:127.0.0.1 - - [03/Apr/2023 01:36:43] "POST /subscribeToTopic?nameTopic=Gatos&nameQueue=Videos_de_gatos_1 HTTP/1.1" 200 -
-INFO:root:Te has suscrito correctamente al topico Gatos
-INFO:root:Finishing server...
-INFO:root:Starting server in port: 8000
-INFO:root:127.0.0.1 - - [03/Apr/2023 01:38:32] "POST /subscribeToTopic?nameTopic=Gatos&nameQueue=Videos_de_gatos_1 HTTP/1.1" 200 -
-INFO:root:Te has suscrito correctamente al topico Gatos
-INFO:root:Finishing server...
-INFO:root:Starting server in port: 8000
-INFO:root:127.0.0.1 - - [03/Apr/2023 01:39:15] "POST /subscribeToTopic?nameTopic=Gatos&nameQueue=Videos_de_gatos_1 HTTP/1.1" 400 -
-INFO:root:La cola Videos_de_gatos_1 no existe
-INFO:root:127.0.0.1 - - [03/Apr/2023 01:39:29] "POST /subscribeToTopic?nameTopic=Perros&nameQueue=Videos_de_gatos HTTP/1.1" 400 -
-INFO:root:El topico Perros no existe
-INFO:root:127.0.0.1 - - [03/Apr/2023 01:39:42] "POST /subscribeToTopic?nameTopic=Gatos&nameQueue=Videos_de_gatos HTTP/1.1" 200 -
-INFO:root:Te has suscrito correctamente al topico Gatos
-INFO:root:127.0.0.1 - - [03/Apr/2023 01:39:48] "POST /subscribeToTopic?nameTopic=Gatos HTTP/1.1" 400 -
-INFO:root:Se necesita el nombre de la cola
+INFO:root:127.0.0.1 - - [03/Apr/2023 18:37:26] "POST /logoutUser HTTP/1.1" 200 -
+INFO:root:Adios, 127.0.0.1 vuelve pronto.
+INFO:root:127.0.0.1 - - [03/Apr/2023 18:37:55] "POST /loginUser?username=Donovan&password=1234 HTTP/1.1" 200 -
+INFO:root:Bienvenido Donovan
+INFO:root:127.0.0.1 - - [03/Apr/2023 18:39:02] "POST /publishMessage?nameTopic=Gatos&message=Hola%20como%20estas HTTP/1.1" 200 -
+INFO:root:Se ha publicado el mensaje correctamente
+INFO:root:127.0.0.1 - - [03/Apr/2023 18:43:38] "POST /logoutUser?nameTopic=Gatos&message=Hola%20como%20estas HTTP/1.1" 200 -
+INFO:root:Adios, 127.0.0.1 vuelve pronto.
+INFO:root:127.0.0.1 - - [03/Apr/2023 18:43:56] "POST /loginUser?username=Juan&password=123 HTTP/1.1" 200 -
+INFO:root:Bienvenido Juan
+INFO:root:127.0.0.1 - - [03/Apr/2023 18:44:54] "POST /vinculateQueue?nameExchange=nuevoCanal&nameQueue=VideosDeGatos HTTP/1.1" 200 -
+INFO:root:Se vinculo correctamente el EXCAHNGE nuevoCanal a la cola VideosDeGatos
+INFO:root:127.0.0.1 - - [03/Apr/2023 18:45:22] "POST /logoutUser HTTP/1.1" 200 -
+INFO:root:Adios, 127.0.0.1 vuelve pronto.
+INFO:root:127.0.0.1 - - [03/Apr/2023 18:45:39] "POST /loginUser?username=Donovan&password=1234 HTTP/1.1" 200 -
+INFO:root:Bienvenido Donovan
+INFO:root:127.0.0.1 - - [03/Apr/2023 18:46:11] "POST /sendMessage?nameExchange=nuevoCanal&message=Probando%20esta%20vuelta HTTP/1.1" 200 -
+INFO:root:Se ha mandado el mensaje correctamente
 INFO:root:Finishing server...

@@ -55,7 +55,7 @@ class UserHandler():
                             'currentIp': ip
                         }}
                     )
-                    if activeUser.acknowledged:
+                    if activeUser.acknowledged and activeUser.modified_count > 0:
                         response["message"] = "Bienvenido " + username
                         response["status"] = 200
                     else:
@@ -78,7 +78,7 @@ class UserHandler():
                 'currentIp': ''
             }}
         )
-        if activeUser.acknowledged:
+        if activeUser.acknowledged and activeUser.modified_count > 0:
             response["message"] = "Adios, "+ ip + " vuelve pronto."
             response["status"] = 200
         else:

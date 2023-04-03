@@ -1,0 +1,20 @@
+INFO:root:Starting server in port: 8000
+INFO:root:127.0.0.1 - - [02/Apr/2023 17:47:32] "POST /createQueue?nameQueue=newQueue1 HTTP/1.1" 403 -
+INFO:root:Ya existe una cola con el nombre newQueue1
+INFO:root:Finishing server...
+INFO:root:Starting server in port: 8000
+INFO:root:Finishing server...
+INFO:root:Starting server in port: 8000
+INFO:root:127.0.0.1 - - [02/Apr/2023 21:58:51] "POST /createTopic?nameTopic=Ensaladas HTTP/1.1" 200 -
+INFO:root:Se creo correctamente el TOPICO Ensaladas
+INFO:root:Finishing server...
+INFO:root:Starting server in port: 8000
+INFO:root:127.0.0.1 - - [02/Apr/2023 22:01:55] "POST /createTopic?nameTopic=Ensaladas HTTP/1.1" 200 -
+INFO:root:Se creo correctamente el TOPICO Ensaladas
+INFO:root:127.0.0.1 - - [02/Apr/2023 22:02:02] "POST /createTopic?nameTopic=Ensaladas HTTP/1.1" 403 -
+INFO:root:Ya existe un topico con el nombre Ensaladas
+INFO:root:Finishing server...
+INFO:root:Starting server in port: 8000
+INFO:root:Finishing server...
+INFO:root:Starting server in port: 8000
+INFO:root:Finishing server...

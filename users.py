@@ -1,6 +1,7 @@
 
 
 class UserHandler():
+
     database = None
     collection = None
 

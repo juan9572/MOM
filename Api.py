@@ -1,13 +1,13 @@
+import os
+import logging
 import http.server
 import socketserver
-import os
-from pymongo import MongoClient
-from dotenv import load_dotenv
-from urllib.parse import urlparse, parse_qs
 from users import UserHandler
+from dotenv import load_dotenv
 from topics import TopicHandler
 from queues import QueueHandler
-import logging
+from pymongo import MongoClient
+from urllib.parse import urlparse, parse_qs
 
 class APIHandler(http.server.BaseHTTPRequestHandler):
 
@@ -22,15 +22,9 @@ class APIHandler(http.server.BaseHTTPRequestHandler):
         parsed_url = urlparse(self.path)
         path = parsed_url.path
         query = parse_qs(parsed_url.query)
-        if path == '/getQueue':
-            user = query.get('username', [None])[0]
+        if path == '/getQueues':
             self.getUserQueues(user)
-        elif path == '/getAllQueues':
-            self.getUserQueues(user)
-        elif path == '/getTopic':
-            user = query.get('username', [None])[0]
-            self.handle_bye()
-        elif path == '/getAllTopics':
+        elif path == '/getTopics':
             self.handle_bye()
         else:
             self.notFoundError(path + " in GET method")
@@ -88,12 +82,14 @@ class APIHandler(http.server.BaseHTTPRequestHandler):
         self.wfile.write(message.encode())
 
     def subscribeToTopic(self, query):
-        username = query.get('username', [None])[0]
-        self.send_response(200)
+        nameT = query.get('nameTopic', [None])[0]
+        nameQ = query.get('nameQueue', [None])[0]
+        res = topic_handler.subscribeToTopic(nameT, nameQ, self.client_address[0])
+        self.send_response(res["status"])
         self.send_header('Content-type', 'text/plain')
         self.end_headers()
-        topic_handler.subscribeToTopic(username)
-        message = f"Hello, World! {username}"
+        message = res["message"]
+        logging.info(res["message"])
         self.wfile.write(message.encode())
 
     def createTopic(self, query):
@@ -151,9 +147,7 @@ class APIHandler(http.server.BaseHTTPRequestHandler):
         parsed_url = urlparse(self.path)
         path = parsed_url.path
         query = parse_qs(parsed_url.query)
-        if path == '/deleteUser':
-            pass
-        elif path == '/deleteQueue':
+        if path == '/deleteQueue':
             pass
         elif path == '/deleteTopic':
             pass

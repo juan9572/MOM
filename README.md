@@ -225,4 +225,4 @@ Función que le permite borrar una cola a su dueno.
 Función que le permite borrar un topico a su dueno.
 - Método: **DELETE**
 - Ruta: **/deleteTopic**
-- QueryString: ?nameTopic=<Topic>
+- QueryString: ?nameTopic=<<Topic>>

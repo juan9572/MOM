@@ -1,5 +1,6 @@
+import os
 import pymongo
-
+import encriptacion
 class QueueHandler():
 
     client = None
@@ -57,12 +58,12 @@ class QueueHandler():
                 {'currentIp': ip},
                 {'queues.nameQueue': name_queue}
             ]})
-            alreadyRegister = False
+            alreadyInUse = False
             for queue in existing_queue["queues"]:
-                if queue["associated"] == name_exchange and queue["type"] == "direct":
-                    alreadyRegister = True
-                    break
-            if existing_queue and existing_queue["active"] == True and not alreadyRegister:
+                if queue["nameQueue"] == name_queue:
+                   alreadyInUse = True if queue["associated"] != "" else False
+                   break
+            if existing_queue and existing_queue["active"] == True and not alreadyInUse:
                 updateUser = self.collection.update_one(
                     {'$and':[
                         {'currentIp': ip},
@@ -80,8 +81,8 @@ class QueueHandler():
                     response["message"] = "Hubo un error al comunicarse con la DB"
                     response["status"] = 500
             else:
-                if alreadyRegister:
-                    response["message"] = "La cola " + name_queue + " ya esta asociada al exchange " + name_exchange
+                if alreadyInUse:
+                    response["message"] = "La cola " + name_queue + " ya esta asociada a un exchange"
                     response["status"] = 500
                 elif not existing_queue:
                     response["message"] = "La cola " + name_queue + " no existe"
@@ -106,13 +107,14 @@ class QueueHandler():
                 try:
                     with self.client.start_session() as session:
                         with session.start_transaction():
+                            encrypt_message = encriptacion.encrypt(message, os.getenv("PASSWORD"))
                             updateQueues = self.collection.update_many(
                                 {'$and':[
                                     {'queues.associated': name_exchange},
                                     {'queues.type': 'direct'}
                                 ]},
                                 {'$push': {
-                                    'queues.$.messages': message
+                                    'queues.$.messages': encrypt_message
                                 }}
                             )
                             if updateQueues.acknowledged and updateQueues.modified_count > 0:
@@ -180,12 +182,64 @@ class QueueHandler():
                 if result is not None:
                     mensaje = next(filter(lambda x: x['nameQueue'] == name_queue, result["queues"]), None)
                     if len(mensaje["messages"]) > 0:
-                        response["message"] = mensaje["messages"][0]
+                        decrypt_message = encriptacion.decrypt(mensaje["messages"][0], os.getenv("PASSWORD"))
+                        response["message"] = decrypt_message
                         response["status"] = 200
                     else:
                         response["message"] = "No hay más mensajes en la cola " + name_queue
                         response["status"] = 200
                 else:
+                    response["message"] = "Hubo un error al comunicarse con la DB"
+                    response["status"] = 500
+            else:
+                response["message"] = "No estas autorizado a hacer esto"
+                response["status"] = 401
+        else:
+            response["message"] = "Se necesita el nombre de la cola"
+            response["status"] = 401
+        return response
+
+    def deleteQueue(self, name_queue, ip):
+        response = {}
+        if name_queue and name_queue != "":
+            existing_user = self.collection.find_one({'$and':[
+                {'currentIp': ip},
+                {'queues.nameQueue': name_queue}
+            ]})
+            if existing_user and existing_user["active"] == True:
+                name_topic = ""
+                is_topic = False
+                for queue in existing_user["queues"]:
+                    if queue["nameQueue"] == name_queue:
+                        name_topic = queue["associated"]
+                        is_topic = True if queue["type"] == "topic" else False
+                        break
+                try:
+                    with self.client.start_session() as session:
+                        with session.start_transaction():
+                            result = self.collection.update_one(
+                                {'currentIp': ip},
+                                {'$pull': {'queues': {'nameQueue': name_queue}}}
+                            )
+                            if is_topic:
+                                updateTopic = self.collection.update_one(
+                                    {'topics.nameTopic': name_topic},
+                                    {'$pull': {'topics.$.subscribers': {'username': existing_user["username"]}}}
+                                )
+                                if result.acknowledged and result.modified_count > 0 and updateTopic.acknowledged and updateTopic.modified_count > 0:
+                                    response["message"] = "Se elimino correctamente la cola " + name_queue
+                                    response["status"] = 200
+                                else:
+                                    response["message"] = "Hubo un error al comunicarse con la DB"
+                                    response["status"] = 500
+                            else:
+                                if result.acknowledged and result.modified_count > 0:
+                                    response["message"] = "Se elimino correctamente la cola " + name_queue
+                                    response["status"] = 200
+                                else:
+                                    response["message"] = "Hubo un error al comunicarse con la DB"
+                                    response["status"] = 500
+                except Exception as e:
                     response["message"] = "Hubo un error al comunicarse con la DB"
                     response["status"] = 500
             else:

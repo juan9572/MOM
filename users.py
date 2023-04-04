@@ -1,5 +1,6 @@
-import encriptacion
 import os
+import encriptacion
+
 class UserHandler():
 
     database = None

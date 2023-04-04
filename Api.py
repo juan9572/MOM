@@ -107,8 +107,6 @@ class APIHandler(http.server.BaseHTTPRequestHandler):
         self.wfile.write(message.encode())
 
     def vinculateQueue(self, query):
-        #Se debería poder reasignar una cola ya previamente asignada a algun topico o exchange?
-        #Validar que no este asociada
         nameE = query.get('nameExchange', [None])[0]
         nameQ = query.get('nameQueue', [None])[0]
         res = queue_handler.vinculateQueue(nameE, nameQ, self.client_address[0])
@@ -120,7 +118,6 @@ class APIHandler(http.server.BaseHTTPRequestHandler):
         self.wfile.write(message.encode())
 
     def subscribeToTopic(self, query):
-        #Se debería poder reasignar una cola ya previamente asignada a algun topico o exchange?
         nameT = query.get('nameTopic', [None])[0]
         nameQ = query.get('nameQueue', [None])[0]
         res = topic_handler.subscribeToTopic(nameT, nameQ, self.client_address[0])
@@ -187,11 +184,31 @@ class APIHandler(http.server.BaseHTTPRequestHandler):
         path = parsed_url.path
         query = parse_qs(parsed_url.query)
         if path == '/deleteQueue':
-            pass
+            self.deleteQueue(query)
         elif path == '/deleteTopic':
-            pass
+            self.deleteTopic(query)
         else:
             self.notFoundError(path + " in DELETE method")
+
+    def deleteTopic(self, query):
+        name = query.get('nameTopic', [None])[0]
+        res = topic_handler.deleteTopic(name, self.client_address[0])
+        self.send_response(res["status"])
+        self.send_header('Content-type', 'text/plain')
+        self.end_headers()
+        message = res["message"]
+        logging.info(res["message"])
+        self.wfile.write(message.encode())
+
+    def deleteQueue(self, query):
+        name = query.get('nameQueue', [None])[0]
+        res = queue_handler.deleteQueue(name, self.client_address[0])
+        self.send_response(res["status"])
+        self.send_header('Content-type', 'text/plain')
+        self.end_headers()
+        message = res["message"]
+        logging.info(res["message"])
+        self.wfile.write(message.encode())
 
     def notFoundError(self, path):
             self.send_response(404)
@@ -203,7 +220,9 @@ class APIHandler(http.server.BaseHTTPRequestHandler):
 if __name__ == '__main__':
     logging.basicConfig(filename='operations.log', level=logging.INFO)
     load_dotenv()
+    logging.info("Starting MongoDB...")
     client = MongoClient("mongodb://" + os.getenv("IPMONGO") + ":" + os.getenv("PORTMONGO"))
+    logging.info("MongoDB ready")
     user_handler = UserHandler(client)
     topic_handler = TopicHandler(client)
     queue_handler = QueueHandler(client)
@@ -211,26 +230,8 @@ if __name__ == '__main__':
     logging.info("Starting server in port: " + str(port))
     try:
         with socketserver.TCPServer(("", port), APIHandler) as httpd:
-            print("Serving at port", port)
+            print("Listening at port", port)
+            logging.info("Listening at port " + str(port))
             httpd.serve_forever()
     finally:
         logging.info("Finishing server...")
-
-'''
-    Usuario:{
-        name:String,
-        password:String,
-        active: False,
-        colas: [{
-            nombre_cola: String,
-            id_exchange: id,
-            mensaje:["Hola"]
-        }],
-        Topico:[{
-            nombre_topico:String,
-            id_topico: id_exchange,
-            subscriber : [Usuarios:String]
-        }]
-    }
-'''
-

@@ -1,20 +1,17 @@
-from base64 import b64encode, b64decode
+import json
 import hashlib
 from Cryptodome.Cipher import AES
+from base64 import b64encode, b64decode
 from Cryptodome.Random import get_random_bytes
-import json
 
 def encrypt(plain_text, password):
     # Generamos siempre una salt aleatoria
     salt = get_random_bytes(AES.block_size)
-
     # Docs https://cryptobook.nakov.com/mac-and-key-derivation/scrypt
     private_key = hashlib.scrypt(
         password.encode(), salt=salt, n=2**14, r=8, p=1, dklen=32)
-
     # Docs https://pycryptodome.readthedocs.io/en/latest/src/cipher/aes.html
     cipher_config = AES.new(private_key, AES.MODE_GCM)
-
     cipher_text, tag = cipher_config.encrypt_and_digest(bytes(plain_text, 'utf-8'))
     encryptedInfo = {
         'cipher_text': b64encode(cipher_text).decode('utf-8'),
@@ -30,12 +27,8 @@ def decrypt(enc_dict, password):
     cipher_text = b64decode(enc_dict['cipher_text'])
     nonce = b64decode(enc_dict['nonce'])
     tag = b64decode(enc_dict['tag'])
-
     private_key = hashlib.scrypt(
         password.encode(), salt=salt, n=2**14, r=8, p=1, dklen=32)
-
     cipher = AES.new(private_key, AES.MODE_GCM, nonce=nonce)
-
     decrypted = cipher.decrypt_and_verify(cipher_text, tag)
-    
     return str(decrypted, 'ascii')

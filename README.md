@@ -80,7 +80,15 @@ Los servicios pueden tener diferentes lenguajes de programación, sistemas opera
 
 ### Diseño
 
-El resultante de nuestra propuesta es una API que expone varios metodos por medio de REST a nuestros clientes. Para esto usamos Python como lenguaje de programacion. Para asegurarnos de que nuestro sistema sea altamente disponible decidimos desplegarlo en tres maquinas de AWS distintas, que se sincronizan entre ellas usando el patron del Master/Slave. Ademas de esto vamos a hacer uso de un balanceador de carga que nos va a ayudar a filtrar las peticiones de escritura (POST, DELETE) y separarlas de las de lectura (GET) de tal manera que se puedan enrutar a el master y los slave respectivamente. Para temas de sincronizacion estamos usando gRPC para comunicar nuestros MOM's en caso de actualizacion de datos, en terminos tecnicos le estamos pasando por el protocolo gRPC el archivo binario de la base de datos para que el receptor genere la base de datos apartir de ahi y asi nos aseguramos de que las transacciones siempre se veran reflejadas en todos los servidores. Tenemos corriendo un servidor HTTP usando una libreria de python que nos permite manejar concurrentemente una alta cantidad de usuarios lo que facilitaria la interaccion de todos con todos. Para temas de persistencia decidimos usar la base de datos NoSQL MongoDB para facilitarnos las operaciones de CRUD, el diseno de la base de datos es bastante simple, solo tenemos una coleccion que se llama Users donde vamos a almacenar toda la informacion relacionada con un usuario, incluyendo colas y topicos que se creen, asi como la informacion respectiva a cada una. Para temas de seguridad estamos usando un metodo de encriptacion de vanguardia que encrypta contrasenas y mensajes con una salt aleateroria y una password privada que nosotros definimos, de tal manera que en la base de datos no se puede ver que es lo que se estan mandando los microservicios, la desencriptacion se hace directamente en el endpoint de la conexion con nuestros clientes. Para efectos de mantener la sesion implementamos una logica la cual nos permite relacionar la ultima ip de conexion de un usuario con todas las acciones que realice mientras se mantiene el estado de la conexion. Nuestro MOM implementa tanto comunicacion asincronica que se puede hacer tanto simetrica como asimetricamente. El mecanismo de recepcion de mensajes esta definido en modo pull para hacer mas sencilla la comunicacion asincronica entre dos partes. En el caso de querer escalar nuestra solucion se puede escalar horizontalmente sin mucho problema puesto que nuestra propuesta esta construida modularmente de tal manera que agregar un nodo mas no afecta el funcionamiento de los existentes.
+El resultado de nuestra propuesta es una API que expone varios métodos por medio de REST a nuestros clientes. Para esto, usamos Python como lenguaje de programación. Para asegurarnos de que nuestro sistema sea altamente disponible, decidimos desplegarlo en tres máquinas de AWS distintas que se sincronizan entre sí usando el patrón del Master/Slave.
+
+Además de esto, vamos a hacer uso de un balanceador de carga que nos ayudará a filtrar las peticiones de escritura (POST, DELETE) y separarlas de las de lectura (GET) de tal manera que se puedan enrutar al master y los slaves respectivamente. Para temas de sincronización, estamos usando gRPC para comunicar nuestros MOM's en caso de actualización de datos. En términos técnicos, le estamos pasando por el protocolo gRPC el archivo binario de la base de datos para que el receptor genere la base de datos a partir de ahí y así nos aseguramos de que las transacciones siempre se verán reflejadas en todos los servidores.
+
+Tenemos corriendo un servidor HTTP usando una librería de Python que nos permite manejar concurrentemente una alta cantidad de usuarios, lo que facilitaría la interacción de todos con todos. Para temas de persistencia, decidimos usar la base de datos NoSQL MongoDB para facilitarnos las operaciones de CRUD. El diseño de la base de datos es bastante simple: solo tenemos una colección que se llama Users, donde vamos a almacenar toda la información relacionada con un usuario, incluyendo colas y tópicos que se creen, así como la información respectiva a cada uno.
+
+Para temas de seguridad, estamos usando un método de encriptación de vanguardia que encripta contraseñas y mensajes con una salt aleatoria y una password privada que nosotros definimos. De tal manera que en la base de datos no se puede ver qué es lo que se están mandando los microservicios. La desencriptación se hace directamente en el endpoint de la conexión con nuestros clientes. Para efectos de mantener la sesión, implementamos una lógica que nos permite relacionar la última IP de conexión de un usuario con todas las acciones que realice mientras se mantiene el estado de la conexión.
+
+Nuestro MOM implementa comunicación asíncrona que se puede hacer tanto simétrica como asimétricamente. El mecanismo de recepción de mensajes está definido en modo pull para hacer más sencilla la comunicación asíncrona entre dos partes. En el caso de querer escalar nuestra solución, se puede escalar horizontalmente sin mucho problema, puesto que nuestra propuesta está construida modularmente de tal manera que agregar un nodo más no afecta el funcionamiento de los existentes.
 
 ### Arquitectura del despliegue
 
@@ -96,63 +104,48 @@ El resultante de nuestra propuesta es una API que expone varios metodos por medi
 
 | Nombre del paquete | Versión | Descripción |
 | --------- | --------- | --------- |
-| Python   | 3.11   | Valor 3   |
-| pyMongo   | Valor 5   | Valor 6   |
-| http.server   | Valor 5   | Valor 6   |
-| logging   | Valor 5   | Valor 6   |
-| urllib   | Valor 5   | Valor 6   |
-| dotenv   | Valor 5   | Valor 6   |
-| bson   | Valor 5   | Valor 6   |
-| json   | Valor 5   | Valor 6   |
-| socketserver   | Valor 5   | Valor 6   |
-| hashlib   | Valor 5   | Valor 6   |
-| Crytodome   | Valor 5   | Valor 6   |
-| base64   | Valor 5   | Valor 6   |
-| Protobuf   | Valor 5   | Valor 6   |
-| grpc   | Valor 5   | Valor 6   |
+| Python   | 3.11   | Lenguaje de programacion usado   |
+| pyMongo   | Valor 5   | Libreria para establecer conexion con MongoDB   |
+| http.server   | Valor 5   | Libreria para crear un servidor HTTP desde Python   |
+| logging   | Valor 5   | Libreria que facilita la creacion de logs |
+| urllib   | Valor 5   | Libreria para el manejo de URL's   |
+| dotenv   | Valor 5   | Libreria para acceder a variables de entorno   |
+| bson   | Valor 5   | Libreria para manejar archivos del tipo bson   |
+| json   | Valor 5   | Libreria para manejar archivos del tipo json   |
+| socketserver   | Valor 5   | Libreria para generar un base server generico   |
+| hashlib   | Valor 5   | hashlib es una librería estándar en Python que proporciona una interfaz para calcular funciones hash de manera segura y eficiente   |
+| Cryptodome   | Valor 5   | librería de criptografía de Python que proporciona una amplia variedad de algoritmos criptográficos    |
+| base64   | Valor 5   | base64 es una librería de Python que proporciona funciones para codificar y decodificar datos en base64   |
+| Protobuf   | Valor 5   | La librería protobuf para Python proporciona un paquete para trabajar con protocol buffers en Python   |
+| grpc   | Valor 5   | La librería grpc para Python proporciona una forma de utilizar gRPC en aplicaciones Python   |
 
 ### Instalacion
 
 Para instalar nuestra solucion en tus servidores es necesario que tengas instaladas todas las dependencias que fueron anteriormente listadas. De esta manera solo seria necesario compilar el archivo .proto que define el paso de mensajes por medio de gRPC para que todo funcione correctamente.
 
 ### Uso
-
+A continuacion la lista de todos los metodos que exponemos en el API, su ruta y los parametros que deberian ser usados para su correcto funcionamiento.
 #### Peticiones GET:
 
 ##### getQueues:
 Función para listar todas las colas que pertenecen a un usuario.
 - Método: **GET**
 - Ruta: **/getQueues**
-- QueryString:
-- Valor de response:
-	```json 
-	{
-		message: "mensaje de confirmación"
-	}
-	```
+- QueryString: No parameters requiered.
+
 ##### getTopics:
 Función para listar todos los topicos que pertenecen a un usuario.
 - Método: **GET**
 - Ruta: **/getTopics**
-- QueryString:
-- Valor de response:
-	```json 
-	{
-		message: "mensaje de confirmación"
-	}
-	```
+- QueryString: No parameters requiered.
+
 
 ##### consumeMessage:
 Función para hacer pull del primer mensaje en la cola del usuario.
 - Método: **GET**
 - Ruta: **/consumeMessage**
-- QueryString:
-- Valor de response:
-	```json 
-	{
-		message: "mensaje de confirmación"
-	}
-	```
+- QueryString: ?nameQueue=<NombreDeLaCola>
+
 
 #### Peticiones POST:
 
@@ -160,109 +153,64 @@ Función para hacer pull del primer mensaje en la cola del usuario.
 Función para registrar un usuario nuevo.
 - Método: **POST**
 - Ruta: **/registerUser**
-- QueryString:
-- Valor de response:
-	```json 
-	{
-		message: "mensaje de confirmación"
-	}
-	```
+- QueryString: ?username=<user>&password=<pass>
+
 
 ##### loginUser:
 Función para crear una sesion como un usuario ya existente.
 - Método: **POST**
 - Ruta: **/loginUser**
-- QueryString:
-- Valor de response:
-	```json 
-	{
-		message: "mensaje de confirmación"
-	}
-	```
+- QueryString: ?username=<user>&password=<pass>
+
 
 ##### logoutUser:
 Función para desloguearse de una sesion ya existente.
 - Método: **POST**
 - Ruta: **/logoutUser**
-- QueryString:
-- Valor de response:
-	```json 
-	{
-		message: "mensaje de confirmación"
-	}
-	```
+- QueryString: No parameters requiered.
+
 
 ##### createQueue:
 Función para crear una cola que se relaciona directamente con el usuario que la creo.
 - Método: **POST**
 - Ruta: **/createQueue**
-- QueryString:
-- Valor de response:
-	```json 
-	{
-		message: "mensaje de confirmación"
-	}
-	```
+- QueryString: ?nameQueue=<Queue>
+
 
 ##### createTopic:
 Función para crear un topico que se relaciona directamente con el usuario que lo creo.
 - Método: **POST**
 - Ruta: **/createTopic**
-- QueryString:
-- Valor de response:
-	```json 
-	{
-		message: "mensaje de confirmación"
-	}
-	```
+- QueryString: ?nameTopic=<Topic>
+
 	
 ##### subscribeToTopic:
 Función que le permite a un usuario suscribirse a un topico ya existente.
 - Método: **POST**
 - Ruta: **/subscribeToTopic**
-- QueryString:
-- Valor de response:
-	```json 
-	{
-		message: "mensaje de confirmación"
-	}
-	```
+- QueryString: ?nameTopic=<Topic>&nameQueue=<Queue>
+
 	
 ##### vinculateQueue:
 Función que le permite a una cola registrar un exchange con otra cola.
 - Método: **POST**
 - Ruta: **/vinculateQueue**
-- QueryString:
-- Valor de response:
-	```json 
-	{
-		message: "mensaje de confirmación"
-	}
-	```
+- QueryString: ?nameExchange=<Exchange>&nameQueue=<Queue>
+
 	
 ##### publishMessage:
 Función que le permite al dueno de un topico mandar un mensaje a todos los subscriptores.
 - Método: **POST**
 - Ruta: **/publishMessage**
-- QueryString:
-- Valor de response:
-	```json 
-	{
-		message: "mensaje de confirmación"
-	}
-	```
+- QueryString: ?nameTopic=<Topic>&message=<Message>
+
 	
 ##### sendMessage:
 Función que le permite a las colas mandarse mensajes entre ellas.
 - Método: **POST**
 - Ruta: **/sendMessage**
-- QueryString:
-- Valor de response:
-	```json 
-	{
-		message: "mensaje de confirmación"
-	}
-	```
+- QueryString: ?nameExchange=<Exchange>&message=<Message>
+
 	
 #### Peticiones DELETE:
 
@@ -270,22 +218,10 @@ Función que le permite a las colas mandarse mensajes entre ellas.
 Función que le permite borrar una cola a su dueno.
 - Método: **DELETE**
 - Ruta: **/deleteQueue**
-- QueryString:
-- Valor de response:
-	```json 
-	{
-		message: "mensaje de confirmación"
-	}
-	```
-	
+- QueryString: ?nameQueue=<Queue>
+
 ##### deleteTopic:
 Función que le permite borrar un topico a su dueno.
 - Método: **DELETE**
 - Ruta: **/deleteTopic**
-- QueryString:
-- Valor de response:
-	```json 
-	{
-		message: "mensaje de confirmación"
-	}
-	```
+- QueryString: ?nameTopic=<Topic>

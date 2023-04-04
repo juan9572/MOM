@@ -1,4 +1,4 @@
-
+import pymongo
 
 class QueueHandler():
 
@@ -134,4 +134,64 @@ class QueueHandler():
             else:
                 response["message"] = "Se necesita el nombre del exhange para poder mandar el mensaje"
                 response["status"] = 400
+        return response
+
+    def getQueues(self, ip):
+        response = {}
+        existing_user = self.collection.find_one({'currentIp': ip})
+        if existing_user and existing_user["active"] == True:
+            message = ""
+            index = 1
+            for queue in existing_user["queues"]:
+                message += (
+                    "Queue #" + str(index) + "\n" +
+                    "nameQueue: " + queue["nameQueue"] + "\n" +
+                    "associated: " + queue["associated"] + "\n" +
+                    "type: " + queue["type"] + "\n" +
+                    "messages: [" + "\n"
+                    )
+                for q in queue["messages"]:
+                    message += q + " ,\n"
+                message += "\n]\n"
+                index += 1
+            response["message"] = message
+            response["status"] = 200
+        else:
+            response["message"] = "No estas autorizado a hacer esto"
+            response["status"] = 401
+        return response
+
+    def consumeMessage(self, name_queue, ip):
+        response = {}
+        if name_queue and name_queue != "":
+            existing_user = self.collection.find_one({'$and':[
+                {'currentIp': ip},
+                {'queues.nameQueue': name_queue}
+            ]})
+            if existing_user and existing_user["active"] == True:
+                result = self.collection.find_one_and_update(
+                    {'$and':[
+                        {'currentIp': ip},
+                        {'queues.nameQueue': name_queue}
+                    ]},
+                    {'$pop':{'queues.$.messages': -1}},
+                    return_document=pymongo.ReturnDocument.BEFORE
+                )
+                if result is not None:
+                    mensaje = next(filter(lambda x: x['nameQueue'] == name_queue, result["queues"]), None)
+                    if len(mensaje["messages"]) > 0:
+                        response["message"] = mensaje["messages"][0]
+                        response["status"] = 200
+                    else:
+                        response["message"] = "No hay más mensajes en la cola " + name_queue
+                        response["status"] = 200
+                else:
+                    response["message"] = "Hubo un error al comunicarse con la DB"
+                    response["status"] = 500
+            else:
+                response["message"] = "No estas autorizado a hacer esto"
+                response["status"] = 401
+        else:
+            response["message"] = "Se necesita el nombre de la cola"
+            response["status"] = 401
         return response

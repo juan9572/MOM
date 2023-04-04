@@ -23,32 +23,35 @@ class APIHandler(http.server.BaseHTTPRequestHandler):
         path = parsed_url.path
         query = parse_qs(parsed_url.query)
         if path == '/getQueues':
-            self.getQueues(query)
+            self.getQueues()
         elif path == '/getTopics':
-            self.getTopics(query)
+            self.getTopics()
         elif path == '/consumeMessage':
             self.consumeMessage(query)
         else:
             self.notFoundError(path + " in GET method")
 
     def consumeMessage(self, query):
-        self.send_response(200)
+        nameQueue = query.get('nameQueue', [None])[0]
+        res = queue_handler.consumeMessage(nameQueue, self.client_address[0])
+        self.send_response(res["status"])
         self.send_header('Content-type', 'text/plain')
         self.end_headers()
-        message = f"Hello, World! {username}"
+        message = res["message"]
+        logging.info(res["message"])
         self.wfile.write(message.encode())
 
-    def getTopics(self, query):
-        self.send_response(200)
+    def getTopics(self):
+        res = topic_handler.getTopics(self.client_address[0])
+        self.send_response(res["status"])
         self.send_header('Content-type', 'text/plain')
         self.end_headers()
-        message = f"Hello, World! {username}"
+        message = res["message"]
+        logging.info(res["message"])
         self.wfile.write(message.encode())
 
-    def getQueues(self, query):
-        nameE = query.get('nameExchange', [None])[0]
-        message = query.get('message', [None])[0]
-        res = queue_handler.sendMessage(nameE, message, self.client_address[0])
+    def getQueues(self):
+        res = queue_handler.getQueues(self.client_address[0])
         self.send_response(res["status"])
         self.send_header('Content-type', 'text/plain')
         self.end_headers()

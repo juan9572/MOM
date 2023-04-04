@@ -157,5 +157,25 @@ class TopicHandler():
                 response["status"] = 400
         return response
 
-    def getTopics(self):
-        pass
+    def getTopics(self, ip):
+        response = {}
+        existing_user = self.collection.find_one({'currentIp': ip})
+        if existing_user and existing_user["active"] == True:
+            message = ""
+            index = 1
+            for topic in existing_user["topics"]:
+                message += (
+                    "Topic #" + str(index) + "\n" +
+                    "nameTopic: " + topic["nameTopic"] + "\n" +
+                    "subscribers: [" + "\n"
+                    )
+                for s in topic["subscribers"]:
+                    message += "username: " + s["username"] + " ,\n"
+                message += "\n]\n"
+                index += 1
+            response["message"] = message
+            response["status"] = 200
+        else:
+            response["message"] = "No estas autorizado a hacer esto"
+            response["status"] = 401
+        return response

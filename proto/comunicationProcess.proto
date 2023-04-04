@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+import "google/protobuf/any.proto";
+
+service ReplicationService {
+  rpc SendReplication(Replica) returns (confirmationMessage);
+}
+
+message confirmationMessage {
+  string messageOfConfirmation = 1;
+}
+
+message Replica {
+  google.protobuf.Any data = 1;
+}

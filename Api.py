@@ -1,4 +1,5 @@
 import os
+import bson
 import logging
 import http.server
 import socketserver
@@ -63,6 +64,7 @@ class APIHandler(http.server.BaseHTTPRequestHandler):
         parsed_url = urlparse(self.path)
         path = parsed_url.path
         query = parse_qs(parsed_url.query)
+        recognize = True
         if path == '/registerUser':
             self.registerUser(query)
         elif path == '/loginUser':
@@ -82,7 +84,10 @@ class APIHandler(http.server.BaseHTTPRequestHandler):
         elif path == '/sendMessage':
             self.sendMessage(query)
         else:
+            recognize = False
             self.notFoundError(path + " in POST method")
+        if recognize:
+            dump(user_handler.collection)
 
     def sendMessage(self, query):
         nameE = query.get('nameExchange', [None])[0]
@@ -183,12 +188,16 @@ class APIHandler(http.server.BaseHTTPRequestHandler):
         parsed_url = urlparse(self.path)
         path = parsed_url.path
         query = parse_qs(parsed_url.query)
+        recognize = True
         if path == '/deleteQueue':
             self.deleteQueue(query)
         elif path == '/deleteTopic':
             self.deleteTopic(query)
         else:
             self.notFoundError(path + " in DELETE method")
+            recognize = False
+        if recognize:
+            dump(user_handler.collection)
 
     def deleteTopic(self, query):
         name = query.get('nameTopic', [None])[0]
@@ -211,11 +220,25 @@ class APIHandler(http.server.BaseHTTPRequestHandler):
         self.wfile.write(message.encode())
 
     def notFoundError(self, path):
-            self.send_response(404)
-            self.send_header('Content-type', 'text/plain')
-            self.end_headers()
-            message = "Not found " + path
-            self.wfile.write(message.encode())
+        self.send_response(404)
+        self.send_header('Content-type', 'text/plain')
+        self.end_headers()
+        message = "Not found " + path
+        self.wfile.write(message.encode())
+
+def dump(collection):
+    logging.info("Init dump...")
+    cursor = collection.find()
+    with open('Users.bson', 'wb+') as f:
+        for doc in cursor:
+            f.write(bson.BSON.encode(doc))
+    logging.info("Finish dump...")
+
+def restore(collection):
+    logging.info("Init restore...")
+    with open('Users.bson', 'rb+') as f:
+        collection.insert_many(bson.decode_all(f.read()))
+    logging.info("Finish restore...")
 
 if __name__ == '__main__':
     logging.basicConfig(filename='operations.log', level=logging.INFO)
@@ -223,6 +246,7 @@ if __name__ == '__main__':
     logging.info("Starting MongoDB...")
     client = MongoClient("mongodb://" + os.getenv("IPMONGO") + ":" + os.getenv("PORTMONGO"))
     logging.info("MongoDB ready")
+    restore(client["MOM"]["Users"])
     user_handler = UserHandler(client)
     topic_handler = TopicHandler(client)
     queue_handler = QueueHandler(client)

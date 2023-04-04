@@ -24,8 +24,8 @@ class UserHandler():
                     'password': encrypt_password,
                     'queues': [],
                     'topics': [],
-                    'active': True,
-                    'currentIp': ip
+                    'active': False,
+                    'currentIp': ''
                 }
                 resultOperation = self.collection.insert_one(new_user)
                 if resultOperation.acknowledged:

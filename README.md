@@ -93,11 +93,11 @@ Nuestro MOM implementa comunicación asíncrona que se puede hacer tanto simétr
 ### Arquitectura del despliegue
 
 ### Arquitectura de clases
+![Arquitectura de datos](https://raw.githubusercontent.com/juan9572/MOM/main/Diagrams/Diagrama%20de%20clases.drawio.png)
 
 ### Arquitectura de datos
-
-### Arquitectura de directorios
-
+![Arquitectura de datos](https://raw.githubusercontent.com/juan9572/MOM/main/Diagrams/Arquitectura%20de%20datos.png)
+Representacion de la coleccion que tenemos en la base de datos.
 ## Documento de detalles/dependencia de implementación, instalación y ejecución
 ---
 ### Dependencias

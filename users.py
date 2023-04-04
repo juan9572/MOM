@@ -1,5 +1,5 @@
-
-
+import encriptacion
+import os
 class UserHandler():
 
     database = None
@@ -13,14 +13,14 @@ class UserHandler():
         response = {}
         if username and password and username != "" and password != "":
             existing_user = self.collection.find_one({'username': username})
-            # Falta la lógica para encriptar los datos
+            encrypt_password = encriptacion.encrypt(password, os.getenv("PASSWORD"))
             if existing_user:
                 response["message"] = "La cuenta " + username + " ya existe y por lo tanto no se puede crear"
                 response["status"] = 409
             else:
                 new_user = {
                     'username': username,
-                    'password': password,
+                    'password': encrypt_password,
                     'queues': [],
                     'topics': [],
                     'active': True,
@@ -42,8 +42,8 @@ class UserHandler():
         response = {}
         if username and password and username != "" and password != "":
             existing_user = self.collection.find_one({'username': username})
-            # Falta la lógica para desencriptar los datos
-            if existing_user and password == existing_user["password"]:
+            decrypt_password = encriptacion.decrypt(existing_user["password"], os.getenv("PASSWORD"))
+            if existing_user and password == decrypt_password:
                 if existing_user["active"] == True:
                     response["message"] = "Ya estas logeado " + username
                     response["status"] = 200
@@ -55,7 +55,7 @@ class UserHandler():
                             'currentIp': ip
                         }}
                     )
-                    if activeUser.acknowledged:
+                    if activeUser.acknowledged and activeUser.modified_count > 0:
                         response["message"] = "Bienvenido " + username
                         response["status"] = 200
                     else:
@@ -78,7 +78,7 @@ class UserHandler():
                 'currentIp': ''
             }}
         )
-        if activeUser.acknowledged:
+        if activeUser.acknowledged and activeUser.modified_count > 0:
             response["message"] = "Adios, "+ ip + " vuelve pronto."
             response["status"] = 200
         else:

@@ -37,5 +37,5 @@ def decrypt(enc_dict, password):
     cipher = AES.new(private_key, AES.MODE_GCM, nonce=nonce)
 
     decrypted = cipher.decrypt_and_verify(cipher_text, tag)
-
+    
     return str(decrypted, 'ascii')

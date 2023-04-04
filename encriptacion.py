@@ -26,7 +26,6 @@ def encrypt(plain_text, password):
 
 def decrypt(enc_dict, password):
     enc_dict = json.loads(b64decode(enc_dict).decode('ascii').replace("'", '"'))
-    print(enc_dict)
     salt = b64decode(enc_dict['salt'])
     cipher_text = b64decode(enc_dict['cipher_text'])
     nonce = b64decode(enc_dict['nonce'])
@@ -40,13 +39,3 @@ def decrypt(enc_dict, password):
     decrypted = cipher.decrypt_and_verify(cipher_text, tag)
 
     return decrypted
-
-def main():
-    encrypted = encrypt('hola', 'donovan')
-    print(encrypted)
-
-    decrypted = decrypt(encrypted, 'donovan')
-    print(bytes.decode(decrypted))
-
-if __name__ == '__main__':
-    main()

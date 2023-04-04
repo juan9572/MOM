@@ -36,3 +36,39 @@ INFO:root:Bienvenido Donovan
 INFO:root:127.0.0.1 - - [03/Apr/2023 18:46:11] "POST /sendMessage?nameExchange=nuevoCanal&message=Probando%20esta%20vuelta HTTP/1.1" 200 -
 INFO:root:Se ha mandado el mensaje correctamente
 INFO:root:Finishing server...
+INFO:root:Starting server in port: 8000
+INFO:root:127.0.0.1 - - [03/Apr/2023 19:05:30] "POST /registerUser?nameExchange=nuevoCanal&message=Probando%20esta%20vuelta HTTP/1.1" 400 -
+INFO:root:Se esperaba un username y password, no se recibieron...
+INFO:root:127.0.0.1 - - [03/Apr/2023 19:05:46] "POST /registerUser?username=Julian&password=Hola HTTP/1.1" 201 -
+INFO:root:Se creo la cuenta Julian y se agrego a la DB
+INFO:root:127.0.0.1 - - [03/Apr/2023 19:06:10] "POST /logoutUser?username=Julian&password=Hola HTTP/1.1" 200 -
+INFO:root:Adios, 127.0.0.1 vuelve pronto.
+INFO:root:127.0.0.1 - - [03/Apr/2023 19:06:19] "POST /loginUser?username=Julian&password=Hola HTTP/1.1" 401 -
+INFO:root:La cuenta o password no son correctas
+INFO:root:Finishing server...
+INFO:root:Starting server in port: 8000
+INFO:root:127.0.0.1 - - [03/Apr/2023 19:07:47] "POST /logoutUser?username=Julian&password=Hola HTTP/1.1" 200 -
+INFO:root:Adios, 127.0.0.1 vuelve pronto.
+INFO:root:127.0.0.1 - - [03/Apr/2023 19:08:00] "POST /loginUser?username=Julian&password=Hola HTTP/1.1" 401 -
+INFO:root:La cuenta o password no son correctas
+INFO:root:127.0.0.1 - - [03/Apr/2023 19:08:57] "POST /logoutUser?username=Julian&password=Hola HTTP/1.1" 500 -
+INFO:root:Hubo un error al comunicarse con la DB
+INFO:root:127.0.0.1 - - [03/Apr/2023 19:09:17] "POST /loginUser?username=Julian&password=Hola HTTP/1.1" 401 -
+INFO:root:La cuenta o password no son correctas
+INFO:root:Finishing server...
+INFO:root:Starting server in port: 8000
+INFO:root:127.0.0.1 - - [03/Apr/2023 19:09:33] "POST /loginUser?username=Julian&password=Hola HTTP/1.1" 401 -
+INFO:root:La cuenta o password no son correctas
+INFO:root:Finishing server...
+INFO:root:Starting server in port: 8000
+INFO:root:127.0.0.1 - - [03/Apr/2023 19:10:14] "POST /loginUser?username=Julian&password=Hola HTTP/1.1" 401 -
+INFO:root:La cuenta o password no son correctas
+INFO:root:Finishing server...
+INFO:root:Starting server in port: 8000
+INFO:root:127.0.0.1 - - [03/Apr/2023 19:11:46] "POST /loginUser?username=Julian&password=Hola HTTP/1.1" 401 -
+INFO:root:La cuenta o password no son correctas
+INFO:root:Finishing server...
+INFO:root:Starting server in port: 8000
+INFO:root:127.0.0.1 - - [03/Apr/2023 19:12:54] "POST /loginUser?username=Julian&password=Hola HTTP/1.1" 200 -
+INFO:root:Bienvenido Julian
+INFO:root:Finishing server...

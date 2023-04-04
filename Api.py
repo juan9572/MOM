@@ -46,10 +46,14 @@ class APIHandler(http.server.BaseHTTPRequestHandler):
         self.wfile.write(message.encode())
 
     def getQueues(self, query):
-        self.send_response(200)
+        nameE = query.get('nameExchange', [None])[0]
+        message = query.get('message', [None])[0]
+        res = queue_handler.sendMessage(nameE, message, self.client_address[0])
+        self.send_response(res["status"])
         self.send_header('Content-type', 'text/plain')
         self.end_headers()
-        message = f"Hello, World! {username}"
+        message = res["message"]
+        logging.info(res["message"])
         self.wfile.write(message.encode())
 
     def do_POST(self):

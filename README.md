@@ -17,7 +17,7 @@
 -  **Correo electrónico del estudiante:** __[jprinconu@eafit.edu.co](mailto:jprinconu@eafit.edu.co)__.
 --
 -   **Nombre del estudiante:** Donovan Castrillon Franco.
--  **Correo electrónico del estudiante:** __[dcastrilf@eafit.edu.co](mailto:dcastrilf@eafit.edu.co)__.
+-  **Correo electrónico del estudiante:** __[dcastrillf@eafit.edu.co](mailto:dcastrillf@eafit.edu.co)__.
 --
 -   **Nombre del estudiante:** Julian Gomez Benitez.
 -  **Correo electrónico del estudiante:** __[jgomezb11@eafit.edu.co](mailto:jgomezb11@eafit.edu.co)__.
@@ -145,7 +145,7 @@ Función para listar todos los topicos que pertenecen a un usuario.
 Función para hacer pull del primer mensaje en la cola del usuario.
 - Método: **GET**
 - Ruta: **/consumeMessage**
-- QueryString: ?nameQueue=<NombreDeLaCola>
+- QueryString: `?nameQueue=<NombreDeLaCola>`
 
 
 #### Peticiones POST:
@@ -154,14 +154,14 @@ Función para hacer pull del primer mensaje en la cola del usuario.
 Función para registrar un usuario nuevo.
 - Método: **POST**
 - Ruta: **/registerUser**
-- QueryString: ?username=<user>&password=<pass>
+- QueryString: `?username=<user>&password=<pass>`
 
 
 ##### loginUser:
 Función para crear una sesion como un usuario ya existente.
 - Método: **POST**
 - Ruta: **/loginUser**
-- QueryString: ?username=<user>&password=<pass>
+- QueryString: `?username=<user>&password=<pass>`
 
 
 ##### logoutUser:
@@ -175,42 +175,42 @@ Función para desloguearse de una sesion ya existente.
 Función para crear una cola que se relaciona directamente con el usuario que la creo.
 - Método: **POST**
 - Ruta: **/createQueue**
-- QueryString: ?nameQueue=<Queue>
+- QueryString: `?nameQueue=<Queue>`
 
 
 ##### createTopic:
 Función para crear un topico que se relaciona directamente con el usuario que lo creo.
 - Método: **POST**
 - Ruta: **/createTopic**
-- QueryString: ?nameTopic=<Topic>
+- QueryString: `?nameTopic=<Topic>`
 
 	
 ##### subscribeToTopic:
 Función que le permite a un usuario suscribirse a un topico ya existente.
 - Método: **POST**
 - Ruta: **/subscribeToTopic**
-- QueryString: ?nameTopic=<Topic>&nameQueue=<Queue>
+- QueryString: `?nameTopic=<Topic>&nameQueue=<Queue>`
 
 	
 ##### vinculateQueue:
 Función que le permite a una cola registrar un exchange con otra cola.
 - Método: **POST**
 - Ruta: **/vinculateQueue**
-- QueryString: ?nameExchange=<Exchange>&nameQueue=<Queue>
+- QueryString: `?nameExchange=<Exchange>&nameQueue=<Queue>`
 
 	
 ##### publishMessage:
 Función que le permite al dueno de un topico mandar un mensaje a todos los subscriptores.
 - Método: **POST**
 - Ruta: **/publishMessage**
-- QueryString: ?nameTopic=<Topic>&message=<Message>
+- QueryString: `?nameTopic=<Topic>&message=<Message>`
 
 	
 ##### sendMessage:
 Función que le permite a las colas mandarse mensajes entre ellas.
 - Método: **POST**
 - Ruta: **/sendMessage**
-- QueryString: ?nameExchange=<Exchange>&message=<Message>
+- QueryString: `?nameExchange=<Exchange>&message=<Message>`
 
 	
 #### Peticiones DELETE:
@@ -219,10 +219,10 @@ Función que le permite a las colas mandarse mensajes entre ellas.
 Función que le permite borrar una cola a su dueno.
 - Método: **DELETE**
 - Ruta: **/deleteQueue**
-- QueryString: ?nameQueue=<Queue>
+- QueryString: `?nameQueue=<Queue>`
 
 ##### deleteTopic:
 Función que le permite borrar un topico a su dueno.
 - Método: **DELETE**
 - Ruta: **/deleteTopic**
-- QueryString: ?nameTopic=<<Topic>>
+- QueryString: `?nameTopic=<Topic>`

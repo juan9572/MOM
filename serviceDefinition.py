@@ -15,19 +15,12 @@ class ReplicationServiceServicer(communicationProcess_pb2_grpc.ReplicationServic
     def SendReplication(self, request, context):
         message = ''
         try:
-            with tempfile.NamedTemporaryFile(delete=False) as tmp_file:
-                tmp_file.write(request.data)
-                tmp_file_path = tmp_file.name
-                self.collection.drop()
-                with open(tmp_file_path, "rb") as bson_file:
-                    insertOperation = self.collection.insert_many(loads(bson_file))
-                    if insertOperation.acknowledged:
-                        message = 'Archivo BSON cargado exitosamente en la base de datos.'
-                    else:
-                        message = 'Error de comunicacion'
-                os.unlink(tmp_file_path)
+            insertOperation = self.collection.insert_many(loads(request.data))
+            if insertOperation.acknowledged:
+                message = 'Archivo BSON cargado exitosamente en la base de datos.'
+            else:
+                message = 'Error de comunicacion'
         except Exception as e:
-            print(e)
             message = f'Error {e}'
         return communicationProcess_pb2.confirmationMessage(
             messageOfConfirmation = message
@@ -38,7 +31,6 @@ class ReplicationServiceServicer(communicationProcess_pb2_grpc.ReplicationServic
             bson_data = list(self.collection.find())
             dict_list = dumps(loads(dumps(bson_data))).encode('ascii')
             data = dict_list
-            print(data)
             return communicationProcess_pb2.Replica(data=data)
         except Exception as e:
             print(e)

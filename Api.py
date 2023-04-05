@@ -245,16 +245,12 @@ def dump(collection):
         logging.info(f"Trying to send data to {current_server}... Try #{i + 1}")
         status = False
         try:
-            with grpc.intercept_channel(current_server) as channel:
+            with grpc.insecure_channel(current_server) as channel:
                 stub = communicationProcess_pb2_grpc.ReplicationServiceStub(channel)
                 request = communicationProcess_pb2.Replica()
-                with tempfile.NamedTemporaryFile(delete=False) as tmp_file:
-                    bson_data = collection.find()
-                    tmp_file.write(dumps(list(bson_data)).encode())
-                    tmp_file_path = tmp_file.name
-                    with open(tmp_file_path, "rb") as bson_file:
-                        request.data = bson_file.read()
-                    os.unlink(tmp_file_path)
+                bson_data = list(collection.find())
+                dict_list = dumps(loads(dumps(bson_data))).encode('ascii')
+                request.data = dict_list
                 response = stub.SendReplication(request)
                 if not response.messageOfConfirmation.startswith("Error"):
                     status = True
@@ -283,22 +279,15 @@ def restore(collection):
         status = False
         try:
             with grpc.insecure_channel(current_server) as channel:
-                print("viendo si funciona esto")
                 stub = communicationProcess_pb2_grpc.ReplicationServiceStub(channel)
-                print("Cree el stub")
                 request = communicationProcess_pb2.confirmationMessage()
-                print("Cree el request")
                 response = stub.getReplication(request)
-                print(response)
-                print(response.data.decode('ascii'))
                 if response.data:
-                    print("si me llego el dato")
                     collection.drop()
                     operation = collection.insert_many(loads(response.data))
                     if operation.acknowledged:
                         status = True
         except Exception as e:
-            print(f"Error connecting to {current_server}: {e}")
             status = False
         if status:
             break

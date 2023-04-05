@@ -1,5 +1,4 @@
 import os
-import bson
 import grpc
 import logging
 import http.server
@@ -12,6 +11,7 @@ from topics import TopicHandler
 from queues import QueueHandler
 from pymongo import MongoClient
 import communicationProcess_pb2
+from bson.json_util import dumps
 import communicationProcess_pb2_grpc
 from urllib.parse import urlparse, parse_qs
 from serviceDefinition import ReplicationServiceServicer
@@ -249,8 +249,8 @@ def dump(collection):
                 stub = communicationProcess_pb2_grpc.ReplicationServiceStub(channel)
                 request = communicationProcess_pb2.Replica()
                 with tempfile.NamedTemporaryFile(delete=False) as tmp_file:
-                    bson_data = bson.dumps(list(collection.find()))
-                    tmp_file.write(bson_data)
+                    bson_data = collection.find()
+                    tmp_file.write(dumps(bson_data).encode())
                     tmp_file_path = tmp_file.name
                     with open(tmp_file_path, "rb") as bson_file:
                         request.data = bson_file.read()

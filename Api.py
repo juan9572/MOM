@@ -282,9 +282,13 @@ def restore(collection):
         logging.info(f"Trying to fetch data from {current_server}... Try #{i + 1}")
         status = False
         try:
+            print("Estoy en el inicio")
             with grpc.intercept_channel(current_server) as channel:
+                print("viendo si funciona esto")
                 stub = communicationProcess_pb2_grpc.ReplicationServiceStub(channel)
+                print("Cree el stub")
                 request = communicationProcess_pb2.confirmationMessage()
+                print("Cree el request")
                 response = stub.getReplication(request)
                 print(collection.database)
                 print(collection.name)

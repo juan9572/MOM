@@ -245,16 +245,24 @@ def dump(collection):
         logging.info(f"Trying to send data to {current_server}... Try #{i + 1}")
         status = False
         try:
+            print("Estoy en el inicio")
             with grpc.insecure_channel(current_server) as channel:
                 stub = communicationProcess_pb2_grpc.ReplicationServiceStub(channel)
+                print("Cree el stub")
                 request = communicationProcess_pb2.Replica()
+                print("Cree el request")
                 bson_data = list(collection.find())
+                print(bson_data)
                 dict_list = dumps(loads(dumps(bson_data))).encode('ascii')
+                print(dict_list)
                 request.data = dict_list
+                print(request.data)
                 response = stub.SendReplication(request)
                 if not response.messageOfConfirmation.startswith("Error"):
+                    print("Funciona")
                     status = True
         except Exception as e:
+            print(e)
             status = False
         if not status:
             if i == 1:

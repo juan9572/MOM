@@ -44,6 +44,7 @@ class ReplicationServiceServicer(communicationProcess_pb2_grpc.ReplicationServic
                     data = bson_file.read()
                 os.unlink(tmp_file_path)
                 print(data)
+                data="Holaaaa"
             return communicationProcess_pb2.Replica(data=data)
         except Exception as e:
             print(e)

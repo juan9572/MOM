@@ -16,6 +16,7 @@ class ReplicationServiceServicer(communicationProcess_pb2_grpc.ReplicationServic
         message = ''
         try:
             print(loads(request.data))
+            self.collection.drop()
             insertOperation = self.collection.insert_many(loads(request.data))
             if insertOperation.acknowledged:
                 message = 'Archivo BSON cargado exitosamente en la base de datos.'

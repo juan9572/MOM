@@ -245,7 +245,7 @@ def dump(collection):
         logging.info(f"Trying to send data to {current_server}... Try #{i + 1}")
         status = False
         try:
-            with grpc.insecure_channel(current_server) as channel:
+            with grpc.intercept_channel(current_server) as channel:
                 stub = communicationProcess_pb2_grpc.ReplicationServiceStub(channel)
                 request = communicationProcess_pb2.Replica()
                 with tempfile.NamedTemporaryFile(delete=False) as tmp_file:
@@ -282,11 +282,16 @@ def restore(collection):
         logging.info(f"Trying to fetch data from {current_server}... Try #{i + 1}")
         status = False
         try:
-            with grpc.intercept_channel(current_server) as channel:
+            with grpc.insecure_channel(current_server) as channel:
+                print("viendo si funciona esto")
                 stub = communicationProcess_pb2_grpc.ReplicationServiceStub(channel)
+                print("Cree el stub")
                 request = communicationProcess_pb2.confirmationMessage()
+                print("Cree el request")
                 response = stub.getReplication(request)
+                print(response)
                 if response.data:
+                    print("si me llego el dato")
                     collection.drop()
                     operation = collection.insert_many(bson.loads(response.data))
                     if operation.acknowledged:

@@ -20,19 +20,19 @@ class RequestHandler(BaseHTTPRequestHandler):
     def do_POST(self):
         global try_servers
         server_url = servers[master]
-        self.proxy(server_url, master)
+        self.proxy(server_url)
         try_servers = 1
 
     def do_DELETE(self):
         global try_servers
         server_url = servers[master]
-        self.proxy(server_url, master)
+        self.proxy(server_url)
         try_servers = 1
 
     def do_GET(self):
         global try_servers
         server_url = get_server()
-        self.proxy(server_url[0], server_url[1])
+        self.proxy(server_url)
         try_servers = 1
 
     def proxy(self, server_url):

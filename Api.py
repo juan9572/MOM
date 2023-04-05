@@ -1,14 +1,22 @@
 import os
 import bson
+import grpc
 import logging
 import http.server
 import socketserver
+import tempfile
 from users import UserHandler
 from dotenv import load_dotenv
+from concurrent import futures
 from topics import TopicHandler
 from queues import QueueHandler
 from pymongo import MongoClient
+import communicationProcess_pb2
+import communicationProcess_pb2_grpc
 from urllib.parse import urlparse, parse_qs
+from serviceDefinition import ReplicationServiceServicer
+
+servers_mom = None
 
 class APIHandler(http.server.BaseHTTPRequestHandler):
 
@@ -228,34 +236,106 @@ class APIHandler(http.server.BaseHTTPRequestHandler):
 
 def dump(collection):
     logging.info("Init dump...")
-    cursor = collection.find()
-    with open('Users.bson', 'wb+') as f:
-        for doc in cursor:
-            f.write(bson.BSON.encode(doc))
+    server = 0
+    i = 0
+    while True:
+        ip = servers_mom[server]["ip"]
+        port = servers_mom[server]["port"]
+        current_server = f"{ip}:{port}"
+        logging.info(f"Trying to send data to {current_server}... Try #{i + 1}")
+        status = False
+        try:
+            with grpc.intercept_channel(current_server) as channel:
+                stub = communicationProcess_pb2_grpc.ReplicationServiceStub(channel)
+                request = communicationProcess_pb2.Replica()
+                with tempfile.NamedTemporaryFile(delete=False) as tmp_file:
+                    bson_data = bson.dumps(list(collection.find()))
+                    tmp_file.write(bson_data)
+                    tmp_file_path = tmp_file.name
+                    with open(tmp_file_path, "rb") as bson_file:
+                        request.data = bson_file.read()
+                    os.unlink(tmp_file_path)
+                response = stub.SendReplication(request)
+                if not response.messageOfConfirmation.startswith("Error"):
+                    status = True
+        except Exception as e:
+            status = False
+        if not status:
+            if i == 1:
+                server += 1
+                i = -1
+        else:
+            server += 1
+        if server == len(servers_mom):
+            break
+        i += 1
     logging.info("Finish dump...")
 
 def restore(collection):
     logging.info("Init restore...")
-    with open('Users.bson', 'rb+') as f:
-        collection.insert_many(bson.decode_all(f.read()))
+    server = 0
+    i = 0
+    while True:
+        ip = servers_mom[server]["ip"]
+        port = servers_mom[server]["port"]
+        current_server = f"{ip}:{port}"
+        logging.info(f"Trying to fetch data from {current_server}... Try #{i + 1}")
+        status = False
+        try:
+            with grpc.intercept_channel(current_server) as channel:
+                stub = communicationProcess_pb2_grpc.ReplicationServiceStub(channel)
+                request = communicationProcess_pb2.confirmationMessage()
+                response = stub.getReplication(request)
+                if response.data:
+                    collection.drop()
+                    operation = collection.insert_many(bson.loads(response.data))
+                    if operation.acknowledged:
+                        status = True
+        except Exception as e:
+            status = False
+        if status:
+            break
+        if i == 2:
+            server += 1
+            i = -1
+        if server == len(servers_mom):
+            break
+        i += 1
     logging.info("Finish restore...")
 
 if __name__ == '__main__':
     logging.basicConfig(filename='operations.log', level=logging.INFO)
     load_dotenv()
+    servers_mom = [
+        {
+            'ip':os.getenv("SERVERIP1"),
+            'port':os.getenv("PORTSERVER1")
+        },
+        {
+            'ip':os.getenv("SERVERIP2"),
+            'port':os.getenv("PORTSERVER2")
+        }
+    ]
     logging.info("Starting MongoDB...")
     client = MongoClient("mongodb://" + os.getenv("IPMONGO") + ":" + os.getenv("PORTMONGO"))
     logging.info("MongoDB ready")
-    restore(client["MOM"]["Users"])
     user_handler = UserHandler(client)
     topic_handler = TopicHandler(client)
     queue_handler = QueueHandler(client)
-    port = int(os.getenv("PORTHTTP"))
-    logging.info("Starting server in port: " + str(port))
+    portHttp = int(os.getenv("PORTHTTP"))
+    portGrpc = os.getenv("PORTGRPC")
+    logging.info("Starting server API in port: " + str(portHttp))
+    logging.info("Starting server for MOM's in port: " + portGrpc)
     try:
-        with socketserver.TCPServer(("", port), APIHandler) as httpd:
-            print("Listening at port", port)
-            logging.info("Listening at port " + str(port))
+        server = grpc.server(futures.ThreadPoolExecutor(max_workers = 10))
+        communicationProcess_pb2_grpc.add_ReplicationServiceServicer_to_server(ReplicationServiceServicer(client["MOM"]["Users"]), server)
+        server.add_insecure_port("[::]:" + portGrpc)
+        server.start()
+        with socketserver.TCPServer(("", portHttp), APIHandler) as httpd:
+            print("Listening at port", portHttp)
+            logging.info("Listening at port " + str(portHttp))
+            restore(client["MOM"]["Users"])
             httpd.serve_forever()
+        server.wait_for_termination()
     finally:
         logging.info("Finishing server...")

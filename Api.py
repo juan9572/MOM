@@ -290,6 +290,8 @@ def restore(collection):
                 print("Cree el request")
                 response = stub.getReplication(request)
                 print(response)
+                print(response.data)
+                print(loads(response.data))
                 if response.data:
                     print("si me llego el dato")
                     collection.drop()

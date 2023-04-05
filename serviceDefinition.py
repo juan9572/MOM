@@ -35,6 +35,7 @@ class ReplicationServiceServicer(communicationProcess_pb2_grpc.ReplicationServic
 
     def getReplication(self, request, context):
         try:
+            data = None
             with tempfile.NamedTemporaryFile(delete=False) as tmp_file:
                 bson_data = self.collection.find()
                 tmp_file.write(dumps(list(bson_data)).encode())
@@ -42,6 +43,7 @@ class ReplicationServiceServicer(communicationProcess_pb2_grpc.ReplicationServic
                 with open(tmp_file_path, "rb") as bson_file:
                     data = bson_file.read()
                 os.unlink(tmp_file_path)
+                print(data)
             return communicationProcess_pb2.Replica(data=data)
         except Exception as e:
             print(e)

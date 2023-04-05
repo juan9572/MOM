@@ -11,7 +11,7 @@ from topics import TopicHandler
 from queues import QueueHandler
 from pymongo import MongoClient
 import communicationProcess_pb2
-from bson.json_util import dumps
+from bson.json_util import (dumps, loads)
 import communicationProcess_pb2_grpc
 from urllib.parse import urlparse, parse_qs
 from serviceDefinition import ReplicationServiceServicer
@@ -293,7 +293,7 @@ def restore(collection):
                 if response.data:
                     print("si me llego el dato")
                     collection.drop()
-                    operation = collection.insert_many(bson.loads(response.data))
+                    operation = collection.insert_many(loads(response.data))
                     if operation.acknowledged:
                         status = True
         except Exception as e:

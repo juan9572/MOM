@@ -283,6 +283,9 @@ def restore(collection):
         status = False
         try:
             print("Estoy en el inicio")
+            print(current_server)
+            print(collection.database)
+            print(collection.name)
             with grpc.intercept_channel(current_server) as channel:
                 print("viendo si funciona esto")
                 stub = communicationProcess_pb2_grpc.ReplicationServiceStub(channel)
@@ -290,8 +293,6 @@ def restore(collection):
                 request = communicationProcess_pb2.confirmationMessage()
                 print("Cree el request")
                 response = stub.getReplication(request)
-                print(collection.database)
-                print(collection.name)
                 print(response)
                 if response.data:
                     print("si me llego el dato")
@@ -300,7 +301,7 @@ def restore(collection):
                     if operation.acknowledged:
                         status = True
         except Exception as e:
-            print("Error", e)
+            print(f"Error connecting to {current_server}: {e}")
             status = False
         if status:
             break

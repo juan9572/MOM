@@ -286,12 +286,17 @@ def restore(collection):
                 stub = communicationProcess_pb2_grpc.ReplicationServiceStub(channel)
                 request = communicationProcess_pb2.confirmationMessage()
                 response = stub.getReplication(request)
+                print(collection.database)
+                print(collection.name)
+                print(response)
                 if response.data:
+                    print("si me llego el dato")
                     collection.drop()
                     operation = collection.insert_many(bson.loads(response.data))
                     if operation.acknowledged:
                         status = True
         except Exception as e:
+            print("Error", e)
             status = False
         if status:
             break

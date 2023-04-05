@@ -93,6 +93,7 @@ Nuestro MOM implementa comunicación asíncrona que se puede hacer tanto simétr
 Para efectos de la estabilidad y disponibilidad del servicio, implementamos un balanceador de carga propio que distribuye las peticiones GET (de lectura) entre los dos servidores esclavos que tenemos, la logica que implementamos para balancear es round robin con un maximo de 3 intentos a un nodo de la red antes de intentar mandar la peticion al siguiente en el ciclo. Las peticiones POST y DELETE (de escritura) solo llegan a una maquina (el master), el master de nosotros no tiene replicas, lo que hicimos fue agregar una logica en la cual un esclavo puede reemplazar al master en caso de que este se caiga.
 
 ### Arquitectura del despliegue
+![Arquitectura de datos](https://raw.githubusercontent.com/juan9572/MOM/main/Diagrams/Diagrama%20de%20arquitectura.png)
 
 ### Arquitectura de clases
 ![Arquitectura de datos](https://raw.githubusercontent.com/juan9572/MOM/main/Diagrams/Diagrama_de_clases.drawio.png)

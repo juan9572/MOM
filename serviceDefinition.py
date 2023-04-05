@@ -39,7 +39,6 @@ class ReplicationServiceServicer(communicationProcess_pb2_grpc.ReplicationServic
                 bson_data = self.collection.find()
                 tmp_file.write(dumps(list(bson_data)).encode())
                 tmp_file_path = tmp_file.name
-                print(tmp_file)
                 with open(tmp_file_path, "rb") as bson_file:
                     data = bson_file.read()
                 os.unlink(tmp_file_path)

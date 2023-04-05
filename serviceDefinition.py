@@ -33,7 +33,6 @@ class ReplicationServiceServicer(communicationProcess_pb2_grpc.ReplicationServic
             data = dict_list
             return communicationProcess_pb2.Replica(data=data)
         except Exception as e:
-            print(e)
             context.set_code(grpc.StatusCode.INTERNAL)
             context.set_details(str(e))
             return communicationProcess_pb2.Replica()

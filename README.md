@@ -90,10 +90,12 @@ Para temas de seguridad, estamos usando un método de encriptación de vanguardi
 
 Nuestro MOM implementa comunicación asíncrona que se puede hacer tanto simétrica como asimétricamente. El mecanismo de recepción de mensajes está definido en modo pull para hacer más sencilla la comunicación asíncrona entre dos partes. En el caso de querer escalar nuestra solución, se puede escalar horizontalmente sin mucho problema, puesto que nuestra propuesta está construida modularmente de tal manera que agregar un nodo más no afecta el funcionamiento de los existentes.
 
+Para efectos de la estabilidad y disponibilidad del servicio, implementamos un balanceador de carga propio que distribuye las peticiones GET (de lectura) entre los dos servidores esclavos que tenemos, la logica que implementamos para balancear es round robin con un maximo de 3 intentos a un nodo de la red antes de intentar mandar la peticion al siguiente en el ciclo. Las peticiones POST y DELETE (de escritura) solo llegan a una maquina (el master), el master de nosotros no tiene replicas, lo que hicimos fue agregar una logica en la cual un esclavo puede reemplazar al master en caso de que este se caiga.
+
 ### Arquitectura del despliegue
 
 ### Arquitectura de clases
-![Arquitectura de datos](https://raw.githubusercontent.com/juan9572/MOM/main/Diagrams/Diagrama%20de%20clases.drawio.png)
+![Arquitectura de datos](https://raw.githubusercontent.com/juan9572/MOM/main/Diagrams/Diagrama_de_clases.drawio.png)
 
 ### Arquitectura de datos
 ![Arquitectura de datos](https://raw.githubusercontent.com/juan9572/MOM/main/Diagrams/Arquitectura%20de%20datos.png)
@@ -106,23 +108,28 @@ Representacion de la coleccion que tenemos en la base de datos.
 | Nombre del paquete | Versión | Descripción |
 | --------- | --------- | --------- |
 | Python   | 3.11   | Lenguaje de programacion usado   |
-| pyMongo   | Valor 5   | Libreria para establecer conexion con MongoDB   |
-| http.server   | Valor 5   | Libreria para crear un servidor HTTP desde Python   |
-| logging   | Valor 5   | Libreria que facilita la creacion de logs |
-| urllib   | Valor 5   | Libreria para el manejo de URL's   |
-| dotenv   | Valor 5   | Libreria para acceder a variables de entorno   |
-| bson   | Valor 5   | Libreria para manejar archivos del tipo bson   |
-| json   | Valor 5   | Libreria para manejar archivos del tipo json   |
-| socketserver   | Valor 5   | Libreria para generar un base server generico   |
-| hashlib   | Valor 5   | hashlib es una librería estándar en Python que proporciona una interfaz para calcular funciones hash de manera segura y eficiente   |
-| Cryptodome   | Valor 5   | librería de criptografía de Python que proporciona una amplia variedad de algoritmos criptográficos    |
-| base64   | Valor 5   | base64 es una librería de Python que proporciona funciones para codificar y decodificar datos en base64   |
-| Protobuf   | Valor 5   | La librería protobuf para Python proporciona un paquete para trabajar con protocol buffers en Python   |
-| grpc   | Valor 5   | La librería grpc para Python proporciona una forma de utilizar gRPC en aplicaciones Python   |
+| pymongo   | 4.3.3   | Libreria para establecer conexion con MongoDB   |
+| python-dotenv   | 1.0   | Libreria para acceder a variables de entorno   |
+| bson   | 0.5.10   | Libreria para maneajar archivos bson   |
+| pycryptodome   |  3.17   | librería de criptografía de Python que proporciona una amplia variedad de algoritmos criptográficos    |
+| protobuf   | 4.22.1   | La librería protobuf para Python proporciona un paquete para trabajar con protocol buffers en Python   |
+| grpcio   | 1.53.0   | La librería grpc para Python proporciona una forma de utilizar gRPC en aplicaciones Python   |
+| grpcio-tools   | 1.53.0   | La librería grpc para Python proporciona herramientas para usar grpc   |
 
 ### Instalacion
 
 Para instalar nuestra solucion en tus servidores es necesario que tengas instaladas todas las dependencias que fueron anteriormente listadas. De esta manera solo seria necesario compilar el archivo .proto que define el paso de mensajes por medio de gRPC para que todo funcione correctamente.
+
+```
+pip install bson
+pip install grpcio
+pip install grpcio-tools
+pip install pycryptodome
+pip install pycryptodomex
+pip install python-dotenv
+pip install pymongo
+pip install requests
+```
 
 ### Uso
 A continuacion la lista de todos los metodos que exponemos en el API, su ruta y los parametros que deberian ser usados para su correcto funcionamiento.

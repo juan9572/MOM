@@ -42,7 +42,7 @@ class ReplicationServiceServicer(communicationProcess_pb2_grpc.ReplicationServic
                 print(dict_list)
                 tmp_file.write(dict_list)
                 tmp_file_path = tmp_file.name
-                print(dumps(dict_list))
+                print(dict_list.decode('ascii'))
                 with open(tmp_file_path, "rb") as bson_file:
                     data = bson_file.read()
                 os.unlink(tmp_file_path)

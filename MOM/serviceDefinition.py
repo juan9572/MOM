@@ -1,6 +1,4 @@
-import os
 import grpc
-import tempfile
 import communicationProcess_pb2
 import communicationProcess_pb2_grpc
 from bson.json_util import (loads, dumps)
@@ -15,7 +13,6 @@ class ReplicationServiceServicer(communicationProcess_pb2_grpc.ReplicationServic
     def SendReplication(self, request, context):
         message = ''
         try:
-            print(loads(request.data))
             self.collection.drop()
             insertOperation = self.collection.insert_many(loads(request.data))
             if insertOperation.acknowledged:

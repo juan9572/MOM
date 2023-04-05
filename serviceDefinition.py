@@ -38,10 +38,10 @@ class ReplicationServiceServicer(communicationProcess_pb2_grpc.ReplicationServic
             data = None
             with tempfile.NamedTemporaryFile(delete=False) as tmp_file:
                 bson_data = list(self.collection.find())
-                dict_list = loads(dumps(bson_data))
-                tmp_file.write(dumps(dict_list))
-                tmp_file_path = tmp_file.name
+                dict_list = loads(dumps(bson_data).encode())
                 print(dict_list)
+                tmp_file.write(dict_list)
+                tmp_file_path = tmp_file.name
                 print(dumps(dict_list))
                 with open(tmp_file_path, "rb") as bson_file:
                     data = bson_file.read()

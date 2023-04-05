@@ -50,7 +50,7 @@ class RequestHandler(BaseHTTPRequestHandler):
             self.end_headers()
             self.wfile.write(resp.content)
         except Exception as e:
-            if tries == 3:
+            if tries >= 3:
                 if self.command == 'GET':
                     server_url = get_server()
                     self.proxy(server_url[0], server_url[1])
@@ -60,7 +60,7 @@ class RequestHandler(BaseHTTPRequestHandler):
                     self.proxy(server_url[0], server_url[1])
                 tries = 0
                 try_servers += 1
-                if try_servers == len(servers):
+                if try_servers >= len(servers):
                     return
             tries += 1
             self.proxy(server_url, index)

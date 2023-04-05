@@ -14,25 +14,28 @@ def get_server():
     global current_server
     val = (current_server + 1) % len(servers)
     current_server = val if val != master else val + 1
-    return (servers[current_server], current_server)
+    return servers[current_server]
 
 class RequestHandler(BaseHTTPRequestHandler):
     def do_POST(self):
+        global try_servers
         server_url = servers[master]
-        self.proxy(server_url[0], server_url[1])
+        self.proxy(server_url, master)
         try_servers = 1
 
     def do_DELETE(self):
+        global try_servers
         server_url = servers[master]
-        self.proxy(server_url[0], server_url[1])
+        self.proxy(server_url, master)
         try_servers = 1
 
     def do_GET(self):
+        global try_servers
         server_url = get_server()
         self.proxy(server_url[0], server_url[1])
         try_servers = 1
 
-    def proxy(self, server_url, index):
+    def proxy(self, server_url):
         global master
         global try_servers
         try:
@@ -53,17 +56,17 @@ class RequestHandler(BaseHTTPRequestHandler):
             if tries >= 3:
                 if self.command == 'GET':
                     server_url = get_server()
-                    self.proxy(server_url[0], server_url[1])
+                    self.proxy(server_url)
                 else:
                     master = (current_server + 1) % len(servers)
                     server_url = servers[master]
-                    self.proxy(server_url[0], server_url[1])
+                    self.proxy(server_url)
                 tries = 0
                 try_servers += 1
                 if try_servers >= len(servers):
                     return
             tries += 1
-            self.proxy(server_url, index)
+            self.proxy(server_url)
 
 if __name__ == '__main__':
     load_dotenv()

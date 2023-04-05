@@ -36,7 +36,7 @@ class ReplicationServiceServicer(communicationProcess_pb2_grpc.ReplicationServic
     def getReplication(self, request, context):
         try:
             with tempfile.NamedTemporaryFile(delete=False) as tmp_file:
-                bson.dump(list(self.collection.find()), tmp_file)
+                bson.dumps(list(self.collection.find()), tmp_file)
                 tmp_file_path = tmp_file.name
             with open(tmp_file_path, "rb") as bson_file:
                 data = bson_file.read()

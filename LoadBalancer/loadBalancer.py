@@ -36,6 +36,7 @@ class RequestHandler(BaseHTTPRequestHandler):
         try_servers = 1
 
     def proxy(self, server_url):
+        global tries
         global master
         global try_servers
         try:

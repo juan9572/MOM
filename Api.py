@@ -250,7 +250,7 @@ def dump(collection):
                 request = communicationProcess_pb2.Replica()
                 with tempfile.NamedTemporaryFile(delete=False) as tmp_file:
                     bson_data = collection.find()
-                    tmp_file.write(dumps(bson_data).encode())
+                    tmp_file.write(dumps(list(bson_data)).encode())
                     tmp_file_path = tmp_file.name
                     with open(tmp_file_path, "rb") as bson_file:
                         request.data = bson_file.read()

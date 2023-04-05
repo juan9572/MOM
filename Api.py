@@ -284,6 +284,7 @@ def restore(collection):
         try:
             print("Estoy en el inicio")
             print(current_server)
+            print(type(current_server))
             print(collection.database)
             print(collection.name)
             with grpc.intercept_channel(current_server) as channel:
